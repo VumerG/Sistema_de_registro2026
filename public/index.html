@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Tablero de diseños del Sistema de Registro 2026: organiza, revisa y aprueba el trabajo del equipo."
+    />
+    <meta name="theme-color" content="#4f46e5" />
+    <title>Tablero de diseños · Sistema de Registro 2026</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <svg class="svg-sprite" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <symbol id="icon-logo" viewBox="0 0 64 64">
+        <rect x="12" y="16" width="11" height="32" rx="3" fill="currentColor" />
+        <rect x="26.5" y="16" width="11" height="22" rx="3" fill="currentColor" opacity=".72" />
+        <rect x="41" y="16" width="11" height="28" rx="3" fill="currentColor" opacity=".88" />
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.4-3.4" />
+      </symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 11a8 8 0 1 0-2.3 6.3" />
+        <path d="M20 4v7h-7" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="icon-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18" />
+        <path d="M8 6V4h8v2" />
+        <path d="m19 6-1 14H6L5 6" />
+        <path d="M10 11v5M14 11v5" />
+      </symbol>
+      <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2" />
+        <path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2" />
+      </symbol>
+      <symbol id="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 3h7v7" />
+        <path d="M10 14 21 3" />
+        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+      </symbol>
+      <symbol id="icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M16 3v4M8 3v4M3 11h18" />
+      </symbol>
+      <symbol id="icon-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="8.5" cy="9.5" r="1.5" />
+        <path d="m21 15-5-5L5 20" />
+      </symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 16V4" />
+        <path d="m7 9 5-5 5 5" />
+        <path d="M5 20h14" />
+      </symbol>
+      <symbol id="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m6 9 6 6 6-6" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m5 12 5 5L20 7" />
+      </symbol>
+      <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v5M12 16h.01" />
+      </symbol>
+      <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Inicio del tablero de diseños">
+          <span class="brand-logo" aria-hidden="true">
+            <svg class="icon"><use href="#icon-logo"></use></svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-eyebrow">Sistema de Registro 2026</span>
+            <span class="brand-title">Tablero de diseños</span>
+          </span>
+        </a>
+
+        <div class="topbar-right">
+          <button
+            class="identity-chip"
+            id="identity-button"
+            type="button"
+            aria-haspopup="dialog"
+            title="Cambiar de integrante"
+            hidden
+          >
+            <span class="avatar" id="identity-avatar" aria-hidden="true"></span>
+            <span class="identity-copy">
+              <strong id="identity-name"></strong>
+              <small id="identity-role"></small>
+            </span>
+            <svg class="icon icon-small" aria-hidden="true"><use href="#icon-chevron"></use></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="page">
+        <section class="page-intro">
+          <div>
+            <h1>Diseños del equipo</h1>
+            <p>
+              Organiza el trabajo creativo de motos, plastiquería, redes, cómics y registro.
+              Arrastra las tarjetas para cambiar su estado.
+            </p>
+          </div>
+          <button class="button primary" id="new-task-button" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>
+            Nuevo diseño
+          </button>
+        </section>
+
+        <section class="stats" aria-label="Resumen del tablero">
+          <article class="stat-card">
+            <span class="stat-label">Total</span>
+            <strong id="stat-total">0</strong>
+            <span class="stat-hint">diseños</span>
+          </article>
+          <article class="stat-card stat-blue">
+            <span class="stat-label">En diseño</span>
+            <strong id="stat-en_diseno">0</strong>
+            <span class="stat-hint">en progreso</span>
+          </article>
+          <article class="stat-card stat-amber">
+            <span class="stat-label">En revisión</span>
+            <strong id="stat-revision">0</strong>
+            <span class="stat-hint">por revisar</span>
+          </article>
+          <article class="stat-card stat-green">
+            <span class="stat-label">Aprobados</span>
+            <strong id="stat-aprobado">0</strong>
+            <span class="stat-hint">listos</span>
+          </article>
+        </section>
+
+        <section class="toolbar" aria-label="Filtros del tablero">
+          <label class="search-field">
+            <svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Buscar por título, etiqueta o persona…"
+              autocomplete="off"
+            />
+          </label>
+
+          <div class="filters">
+            <label class="filter">
+              <span>Área</span>
+              <select id="filter-area"></select>
+            </label>
+            <label class="filter">
+              <span>Prioridad</span>
+              <select id="filter-prioridad"></select>
+            </label>
+            <label class="filter">
+              <span>Responsable</span>
+              <select id="filter-responsable"></select>
+            </label>
+          </div>
+
+          <button class="button ghost" id="clear-filters" type="button" hidden>
+            Limpiar
+          </button>
+          <button
+            class="icon-button refresh-button"
+            id="refresh-button"
+            type="button"
+            title="Actualizar tablero"
+            aria-label="Actualizar tablero"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          </button>
+        </section>
+
+        <div class="board-wrap">
+          <div class="board-loading" id="board-loading" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Cargando tablero…</span>
+          </div>
+          <section class="board" id="board" aria-label="Tablero de diseños"></section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>Datos guardados en Turso · <code>records</code> · JSONB</span>
+        <a
+          href="https://github.com/VumerG/Sistema_de_registro2026"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Repositorio
+          <svg class="icon icon-small" aria-hidden="true"><use href="#icon-external"></use></svg>
+        </a>
+      </footer>
+    </div>
+
+    <div class="identity-screen" id="identity-screen" hidden>
+      <div
+        class="identity-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="identity-title"
+      >
+        <div class="identity-logo" aria-hidden="true">
+          <svg class="icon"><use href="#icon-logo"></use></svg>
+        </div>
+        <span class="eyebrow">Sistema de Registro 2026</span>
+        <h2 id="identity-title">¿Quién está trabajando?</h2>
+        <p id="identity-subtitle">
+          Elige tu nombre para registrar la autoría de los diseños que subas.
+        </p>
+        <div class="identity-options" id="identity-options"></div>
+        <p class="identity-note" id="identity-note">
+          Esta selección identifica al autor; no es una autenticación.
+        </p>
+        <button class="button ghost" id="identity-cancel" type="button" hidden>
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <dialog class="modal" id="task-dialog">
+      <form class="modal-card" id="task-form">
+        <header class="modal-header">
+          <div>
+            <span class="eyebrow">Diseño</span>
+            <h2 id="task-dialog-title">Nuevo diseño</h2>
+          </div>
+          <button class="icon-button" id="task-close" type="button" aria-label="Cerrar">
+            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
+        </header>
+
+        <div class="modal-body">
+          <div class="form-error" id="task-form-error" role="alert" hidden></div>
+          <p class="task-meta" id="task-meta" hidden></p>
+
+          <label class="field field-full">
+            <span>Título <em>*</em></span>
+            <input
+              id="task-titulo"
+              name="titulo"
+              type="text"
+              maxlength="120"
+              required
+              placeholder="Ej. Banner para redes sociales"
+            />
+          </label>
+
+          <label class="field field-full">
+            <span>Descripción</span>
+            <textarea
+              id="task-descripcion"
+              name="descripcion"
+              rows="4"
+              maxlength="4000"
+              placeholder="Contexto, medidas, referencias o notas para el equipo…"
+            ></textarea>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span>Área <em>*</em></span>
+              <select id="task-area" required></select>
+            </label>
+            <label class="field">
+              <span>Estado</span>
+              <select id="task-estado"></select>
+            </label>
+            <label class="field">
+              <span>Prioridad</span>
+              <select id="task-prioridad"></select>
+            </label>
+            <label class="field">
+              <span>Responsable</span>
+              <select id="task-responsable"></select>
+            </label>
+            <label class="field">
+              <span>Fecha de entrega</span>
+              <input id="task-fecha" type="date" />
+            </label>
+          </div>
+
+          <label class="field field-full">
+            <span>Etiquetas</span>
+            <input
+              id="task-etiquetas"
+              type="text"
+              maxlength="300"
+              placeholder="redes, instagram, urgente"
+            />
+            <small class="hint">Sepáralas con comas. Máximo 8 etiquetas.</small>
+            <span class="tag-preview" id="task-tags-preview"></span>
+          </label>
+
+          <label class="field field-full">
+            <span>Enlace del diseño</span>
+            <input
+              id="task-enlace"
+              type="url"
+              placeholder="https://www.figma.com/…"
+            />
+          </label>
+
+          <div class="field field-full">
+            <span>Imagen de portada</span>
+            <label class="cover-zone" id="cover-zone" for="cover-input">
+              <input
+                id="cover-input"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                hidden
+              />
+              <span class="cover-zone-icon" aria-hidden="true">
+                <svg class="icon"><use href="#icon-upload"></use></svg>
+              </span>
+              <span class="cover-zone-text">
+                <strong>Haz clic o arrastra una imagen</strong>
+                <small>JPG, PNG o WebP. Se comprime automáticamente (máx. 1.5 MB).</small>
+              </span>
+            </label>
+            <div class="cover-preview" id="cover-preview" hidden>
+              <img id="cover-image" alt="Vista previa de la portada" />
+              <div class="cover-preview-actions">
+                <button class="button ghost small" id="cover-change" type="button">
+                  Cambiar
+                </button>
+                <button class="button ghost danger small" id="cover-remove" type="button">
+                  Quitar
+                </button>
+              </div>
+            </div>
+            <p class="hint" id="cover-status"></p>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="button danger ghost" id="task-delete" type="button" hidden>
+            <svg class="icon icon-small" aria-hidden="true"><use href="#icon-trash"></use></svg>
+            Eliminar
+          </button>
+          <div class="modal-footer-right">
+            <button class="button ghost" id="task-cancel" type="button">Cancelar</button>
+            <button class="button primary" id="task-submit" type="submit">
+              Crear diseño
+            </button>
+          </div>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="modal modal-small" id="confirm-dialog">
+      <div class="modal-card">
+        <header class="modal-header">
+          <div>
+            <span class="eyebrow">Confirmación</span>
+            <h2>Eliminar diseño</h2>
+          </div>
+          <button class="icon-button" id="confirm-close" type="button" aria-label="Cerrar">
+            <svg class="icon" aria-hidden="true"><use href="#icon-close"></use></svg>
+          </button>
+        </header>
+        <div class="modal-body">
+          <p id="confirm-message"></p>
+        </div>
+        <footer class="modal-footer">
+          <div></div>
+          <div class="modal-footer-right">
+            <button class="button ghost" id="confirm-cancel" type="button">Cancelar</button>
+            <button class="button danger" id="confirm-accept" type="button">Eliminar</button>
+          </div>
+        </footer>
+      </div>
+    </dialog>
+
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <noscript>
+      <div class="noscript">
+        El tablero necesita JavaScript habilitado para funcionar.
+      </div>
+    </noscript>
+  </body>
+</html>
