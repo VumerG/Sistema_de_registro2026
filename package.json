@@ -8,6 +8,8 @@
     "node": ">=20.11.0"
   },
   "scripts": {
+    "dev": "tsx watch src/modules/registro/demo.ts",
+    "start": "tsx src/modules/registro/demo.ts",
     "db:init": "tsx scripts/db-init.ts",
     "demo": "tsx src/modules/registro/demo.ts",
     "typecheck": "tsc --noEmit",
