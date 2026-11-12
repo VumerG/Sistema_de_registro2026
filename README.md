@@ -327,7 +327,10 @@ git merge origin/main
 
 | Comando | Para qué sirve |
 | :--- | :--- |
+| `npm run dev` | Inicia el **Servidor HTTP en vivo** con recarga automática en <http://localhost:3000>. |
+| `npm start` | Inicia el **Servidor HTTP** en modo estándar en <http://localhost:3000>. |
+| `npm run demo` | Ejecuta el script demostrativo en consola del CRUD del módulo `registro`. |
+| `npm run verify` | Corre typecheck y tests para verificar que todo esté perfecto antes del PR. |
+| `npx tsx src/modules/[modulo]/demo.ts` | Ejecuta tu script de prueba propio en consola. |
 | `git branch --show-current` | Muestra en qué rama estás parado. |
-| `npm run verify` | Corre typecheck y tests para verificar que todo esté perfecto. |
-| `npx tsx src/modules/[modulo]/demo.ts` | Ejecuta tu script de prueba propio. |
 | `git status` | Revisa qué archivos modificaste antes de hacer commit. |
