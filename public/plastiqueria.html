@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Módulo Plastiquería — Sistema de Registro 2026</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/portal.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/">
+          <span>🚀 Sistema de Registro</span>
+          <span class="brand-badge" style="background: var(--color-plastiqueria);">plastiqueria</span>
+        </a>
+
+        <nav class="site-nav">
+          <a class="nav-link" href="/">🏠 Inicio</a>
+          <a class="nav-link" href="/diseno">📋 Tablero de Diseños</a>
+          <a class="nav-link" href="/registro">🎓 Registro</a>
+          <a class="nav-link" href="/motos">🏍️ Motos</a>
+          <a class="nav-link active" href="/plastiqueria">🧪 Plastiquería</a>
+          <a class="nav-link" href="/redes">🌐 Redes</a>
+          <a class="nav-link" href="/comics">📚 Cómics</a>
+        </nav>
+
+        <div class="status-chip">
+          <span class="status-dot"></span>
+          <span>Turso libSQL</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 style="font-size: 2rem; font-weight: 800;">🧪 Productos y Lotes de Plastiquería</h1>
+          <p style="color: var(--text-muted);">
+            Módulo desarrollado por <strong>Edwin</strong> (Rama: <code>plastiqueria</code>). Almacenamiento en <code>records</code> con <code>JSONB</code>.
+          </p>
+        </div>
+        <button class="btn btn-primary" id="btn-nuevo" style="background: var(--color-plastiqueria);">
+          ➕ Nuevo Producto / Lote
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <input type="text" id="filtro-busqueda" class="form-control" style="max-width: 380px;" placeholder="🔍 Buscar por producto, código o resina..." />
+        <button class="btn btn-secondary" id="btn-recargar">🔄 Recargar</button>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Código / Lote</th>
+              <th>Producto</th>
+              <th>Tipo de Polímero</th>
+              <th>Color / Pigmento</th>
+              <th>Unidades</th>
+              <th>Peso Unit. (g)</th>
+              <th>Calidad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-cuerpo">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-dim); padding: 2rem;">Cargando productos desde Turso...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal para Registrar -->
+      <dialog id="modal-nuevo">
+        <h2 style="margin-bottom: 1rem; font-size: 1.25rem;">🧪 Registrar Producto de Planta</h2>
+        <form id="form-nuevo">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="codigo">Código de Producto</label>
+              <input class="form-control" id="codigo" required placeholder="PLAST-PET-042" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lote">Número de Lote</label>
+              <input class="form-control" id="lote" required placeholder="LOT-2026-X8" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre de la Pieza / Producto</label>
+            <input class="form-control" id="nombre" required placeholder="Botella 500ml cuello 28mm" />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="polimero">Polímero / Resina</label>
+              <select class="form-control" id="polimero">
+                <option value="PET">PET (Tereftalato de polietileno)</option>
+                <option value="HDPE">HDPE (Polietileno de alta densidad)</option>
+                <option value="LDPE">LDPE (Polietileno de baja densidad)</option>
+                <option value="PP">PP (Polipropileno)</option>
+                <option value="PVC">PVC (Policloruro de vinilo)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="color">Color / Pigmento</label>
+              <input class="form-control" id="color" value="Cristal Transparente" required />
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="cantidad">Cantidad Producida</label>
+              <input class="form-control" id="cantidad" type="number" value="10000" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="peso">Peso por Pieza (gramos)</label>
+              <input class="form-control" id="peso" type="number" step="0.1" value="24.5" required />
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+            <button class="btn btn-secondary" type="button" id="btn-cerrar-modal">Cancelar</button>
+            <button class="btn btn-primary" type="submit" style="background: var(--color-plastiqueria);">Guardar en Turso</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- Modal Visor JSON -->
+      <dialog id="modal-json">
+        <h2 style="margin-bottom: 0.75rem; font-size: 1.15rem;">📄 Contenido JSONB de Plastiquería</h2>
+        <pre class="json-view" id="json-preview"></pre>
+        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+          <button class="btn btn-secondary" id="btn-cerrar-json">Cerrar</button>
+        </div>
+      </dialog>
+    </main>
+
+    <footer class="site-footer">
+      <p>Sistema de Registro 2026 · Módulo Plastiquería (Edwin)</p>
+    </footer>
+
+    <script>
+      let registros = [];
+      const tbody = document.getElementById("tabla-cuerpo");
+      const modalNuevo = document.getElementById("modal-nuevo");
+      const modalJson = document.getElementById("modal-json");
+      const jsonPreview = document.getElementById("json-preview");
+
+      async function cargarRegistros() {
+        try {
+          const res = await fetch("/api/plastiqueria");
+          const data = await res.json();
+          registros = data.datos || [];
+          renderizar();
+        } catch {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 2rem;">Error al cargar datos desde Turso</td></tr>`;
+        }
+      }
+
+      function renderizar() {
+        const q = document.getElementById("filtro-busqueda").value.toLowerCase();
+        const filtrados = registros.filter(r => {
+          const c = r.content || {};
+          return (c.nombre || "").toLowerCase().includes(q) ||
+                 (c.codigo || "").toLowerCase().includes(q) ||
+                 (c.polimero || "").toLowerCase().includes(q);
+        });
+
+        if (filtrados.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 2rem;">No hay productos de plastiquería registrados en Turso. ¡Registra el primero!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtrados.map(r => {
+          const c = r.content || {};
+          return `
+            <tr>
+              <td><strong>${c.codigo || "—"}</strong><br><small style="color: var(--text-dim);">Lote: ${c.lote || "—"}</small></td>
+              <td>${c.nombre || "Sin nombre"}</td>
+              <td><span style="padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(16,185,129,0.2); color: #6ee7b7; font-size: 0.8rem; font-weight: 600;">${c.polimero || "PET"}</span></td>
+              <td>${c.color || "—"}</td>
+              <td><span style="color: #34d399; font-weight: 600;">${(c.cantidad || 0).toLocaleString()}</span></td>
+              <td>${c.peso || "—"} g</td>
+              <td><span style="color: #10b981;">Aprobado</span></td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="verJson('${r.id}')">JSON</button>
+                <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="eliminar('${r.id}')">Eliminar</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      window.verJson = (id) => {
+        const reg = registros.find(r => r.id === id);
+        if (reg) {
+          jsonPreview.textContent = JSON.stringify(reg, null, 2);
+          modalJson.showModal();
+        }
+      };
+
+      window.eliminar = async (id) => {
+        if (!confirm("¿Seguro que deseas eliminar este producto?")) return;
+        try {
+          await fetch(`/api/plastiqueria/${id}`, { method: "DELETE" });
+          cargarRegistros();
+        } catch {
+          alert("Error al eliminar");
+        }
+      };
+
+      document.getElementById("btn-nuevo").onclick = () => modalNuevo.showModal();
+      document.getElementById("btn-cerrar-modal").onclick = () => modalNuevo.close();
+      document.getElementById("btn-cerrar-json").onclick = () => modalJson.close();
+      document.getElementById("btn-recargar").onclick = cargarRegistros;
+      document.getElementById("filtro-busqueda").oninput = renderizar;
+
+      document.getElementById("form-nuevo").onsubmit = async (e) => {
+        e.preventDefault();
+        const payload = {
+          codigo: document.getElementById("codigo").value.trim().toUpperCase(),
+          lote: document.getElementById("lote").value.trim().toUpperCase(),
+          nombre: document.getElementById("nombre").value.trim(),
+          polimero: document.getElementById("polimero").value,
+          color: document.getElementById("color").value.trim(),
+          cantidad: Number(document.getElementById("cantidad").value),
+          peso: Number(document.getElementById("peso").value),
+          controlCalidad: {
+            inspeccionVisual: true,
+            resistenciaImpacto: true,
+            selladoHermetico: true
+          },
+          fechaFabricacion: new Date().toISOString()
+        };
+
+        try {
+          const res = await fetch("/api/plastiqueria", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.ok) {
+            modalNuevo.close();
+            document.getElementById("form-nuevo").reset();
+            cargarRegistros();
+          } else {
+            alert(data.error || "Error al registrar");
+          }
+        } catch {
+          alert("Error de conexión");
+        }
+      };
+
+      cargarRegistros();
+    </script>
+  </body>
+</html>

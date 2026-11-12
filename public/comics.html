@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Módulo Cómics — Sistema de Registro 2026</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/portal.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/">
+          <span>🚀 Sistema de Registro</span>
+          <span class="brand-badge" style="background: var(--color-comics);">comics</span>
+        </a>
+
+        <nav class="site-nav">
+          <a class="nav-link" href="/">🏠 Inicio</a>
+          <a class="nav-link" href="/diseno">📋 Tablero de Diseños</a>
+          <a class="nav-link" href="/registro">🎓 Registro</a>
+          <a class="nav-link" href="/motos">🏍️ Motos</a>
+          <a class="nav-link" href="/plastiqueria">🧪 Plastiquería</a>
+          <a class="nav-link" href="/redes">🌐 Redes</a>
+          <a class="nav-link active" href="/comics">📚 Cómics</a>
+        </nav>
+
+        <div class="status-chip">
+          <span class="status-dot"></span>
+          <span>Turso libSQL</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1 style="font-size: 2rem; font-weight: 800;">📚 Catálogo y Colección de Cómics</h1>
+          <p style="color: var(--text-muted);">
+            Módulo desarrollado por <strong>Elian</strong> (Rama: <code>comics</code>). Almacenamiento en <code>records</code> con <code>JSONB</code>.
+          </p>
+        </div>
+        <button class="btn btn-primary" id="btn-nuevo" style="background: var(--color-comics);">
+          ➕ Nuevo Cómic
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <input type="text" id="filtro-busqueda" class="form-control" style="max-width: 380px;" placeholder="🔍 Buscar por título, editorial o autor..." />
+        <button class="btn btn-secondary" id="btn-recargar">🔄 Recargar</button>
+      </div>
+
+      <div class="data-table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Título y Número</th>
+              <th>Editorial</th>
+              <th>Año</th>
+              <th>Guionista / Dibujante</th>
+              <th>Condición</th>
+              <th>Precio ($)</th>
+              <th>Leído</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-cuerpo">
+            <tr>
+              <td colspan="8" style="text-align: center; color: var(--text-dim); padding: 2rem;">Cargando cómics desde Turso...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal para Registrar Cómic -->
+      <dialog id="modal-nuevo">
+        <h2 style="margin-bottom: 1rem; font-size: 1.25rem;">📚 Registrar Nuevo Cómic</h2>
+        <form id="form-nuevo">
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="titulo">Título de la Serie</label>
+              <input class="form-control" id="titulo" required placeholder="The Amazing Spider-Man" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="numero">Número (#)</label>
+              <input class="form-control" id="numero" type="number" value="300" required />
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="editorial">Editorial</label>
+              <select class="form-control" id="editorial">
+                <option value="Marvel Comics">Marvel Comics</option>
+                <option value="DC Comics">DC Comics</option>
+                <option value="Image Comics">Image Comics</option>
+                <option value="Dark Horse">Dark Horse</option>
+                <option value="Vertigo">Vertigo</option>
+                <option value="IDW Publishing">IDW</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="anio">Año</label>
+              <input class="form-control" id="anio" type="number" value="1988" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="condicion">Condición</label>
+              <select class="form-control" id="condicion">
+                <option value="mint">Mint (10.0)</option>
+                <option value="near-mint" selected>Near Mint (9.4+)</option>
+                <option value="very-fine">Very Fine (8.0+)</option>
+                <option value="fine">Fine (6.0+)</option>
+                <option value="good">Good (2.0+)</option>
+              </select>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="guionista">Guionista</label>
+              <input class="form-control" id="guionista" required value="David Michelinie" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="dibujante">Dibujante</label>
+              <input class="form-control" id="dibujante" required value="Todd McFarlane" />
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="precio">Precio Pagado / Valor ($)</label>
+              <input class="form-control" id="precio" type="number" step="0.5" value="120.0" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="coleccion">Nombre Colección (Opcional)</label>
+              <input class="form-control" id="coleccion" placeholder="Spider-Man Omnibus" />
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+            <button class="btn btn-secondary" type="button" id="btn-cerrar-modal">Cancelar</button>
+            <button class="btn btn-primary" type="submit" style="background: var(--color-comics);">Guardar en Turso</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- Modal Visor JSON -->
+      <dialog id="modal-json">
+        <h2 style="margin-bottom: 0.75rem; font-size: 1.15rem;">📄 Contenido JSONB del Cómic</h2>
+        <pre class="json-view" id="json-preview"></pre>
+        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+          <button class="btn btn-secondary" id="btn-cerrar-json">Cerrar</button>
+        </div>
+      </dialog>
+    </main>
+
+    <footer class="site-footer">
+      <p>Sistema de Registro 2026 · Módulo Cómics (Elian)</p>
+    </footer>
+
+    <script>
+      let registros = [];
+      const tbody = document.getElementById("tabla-cuerpo");
+      const modalNuevo = document.getElementById("modal-nuevo");
+      const modalJson = document.getElementById("modal-json");
+      const jsonPreview = document.getElementById("json-preview");
+
+      async function cargarRegistros() {
+        try {
+          const res = await fetch("/api/comics");
+          const data = await res.json();
+          registros = data.datos || [];
+          renderizar();
+        } catch {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #ef4444; padding: 2rem;">Error al cargar datos desde Turso</td></tr>`;
+        }
+      }
+
+      function renderizar() {
+        const q = document.getElementById("filtro-busqueda").value.toLowerCase();
+        const filtrados = registros.filter(r => {
+          const c = r.content || {};
+          return (c.titulo || "").toLowerCase().includes(q) ||
+                 (c.editorial || "").toLowerCase().includes(q) ||
+                 (c.guionista || "").toLowerCase().includes(q);
+        });
+
+        if (filtrados.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 2rem;">No hay cómics registrados en Turso. ¡Registra el primero!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtrados.map(r => {
+          const c = r.content || {};
+          return `
+            <tr>
+              <td><strong>${c.titulo || "Sin título"}</strong> #${c.numero || "1"}</td>
+              <td><span style="padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(244,63,94,0.2); color: #fda4af; font-size: 0.8rem; font-weight: 600;">${c.editorial || "Marvel"}</span></td>
+              <td>${c.anioPublicacion || c.anio || "—"}</td>
+              <td>${c.guionista || "—"} / ${c.dibujante || "—"}</td>
+              <td><span style="color: #fb7185; text-transform: capitalize;">${c.condicion || "Near-Mint"}</span></td>
+              <td><span style="color: #34d399; font-weight: 600;">$${(c.precioPortada || c.adquisicion?.precioPagado || c.precio || 0).toFixed(2)}</span></td>
+              <td><span style="color: #10b981;">✓ Leído</span></td>
+              <td>
+                <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="verJson('${r.id}')">JSON</button>
+                <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="eliminar('${r.id}')">Eliminar</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      window.verJson = (id) => {
+        const reg = registros.find(r => r.id === id);
+        if (reg) {
+          jsonPreview.textContent = JSON.stringify(reg, null, 2);
+          modalJson.showModal();
+        }
+      };
+
+      window.eliminar = async (id) => {
+        if (!confirm("¿Seguro que deseas eliminar este cómic?")) return;
+        try {
+          await fetch(`/api/comics/${id}`, { method: "DELETE" });
+          cargarRegistros();
+        } catch {
+          alert("Error al eliminar");
+        }
+      };
+
+      document.getElementById("btn-nuevo").onclick = () => modalNuevo.showModal();
+      document.getElementById("btn-cerrar-modal").onclick = () => modalNuevo.close();
+      document.getElementById("btn-cerrar-json").onclick = () => modalJson.close();
+      document.getElementById("btn-recargar").onclick = cargarRegistros;
+      document.getElementById("filtro-busqueda").oninput = renderizar;
+
+      document.getElementById("form-nuevo").onsubmit = async (e) => {
+        e.preventDefault();
+        const payload = {
+          titulo: document.getElementById("titulo").value.trim(),
+          editorial: document.getElementById("editorial").value,
+          numero: Number(document.getElementById("numero").value),
+          volumen: 1,
+          anioPublicacion: Number(document.getElementById("anio").value),
+          guionista: document.getElementById("guionista").value.trim(),
+          dibujante: document.getElementById("dibujante").value.trim(),
+          condicion: document.getElementById("condicion").value,
+          precioPortada: Number(document.getElementById("precio").value),
+          coleccion: {
+            nombre: document.getElementById("coleccion").value.trim() || "Colección Personal",
+            tomo: 1,
+            totalTomos: 1
+          },
+          leido: true,
+          etiquetas: ["coleccionable"]
+        };
+
+        try {
+          const res = await fetch("/api/comics", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (data.ok) {
+            modalNuevo.close();
+            document.getElementById("form-nuevo").reset();
+            cargarRegistros();
+          } else {
+            alert(data.error || "Error al registrar");
+          }
+        } catch {
+          alert("Error de conexión");
+        }
+      };
+
+      cargarRegistros();
+    </script>
+  </body>
+</html>

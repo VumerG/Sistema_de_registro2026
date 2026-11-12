@@ -9,6 +9,7 @@ import type {
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { AppError } from "./core/app-error.js";
+import { createModuleRouter } from "./core/create-module-router.js";
 import { getDbClient } from "./db/client.js";
 import { registroRouter } from "./modules/registro/routes.js";
 import {
@@ -56,7 +57,7 @@ function miembroDe(res: Response): string {
 }
 
 /**
- * Construye la aplicación HTTP del tablero de diseño y API REST de módulos.
+ * Construye la aplicación HTTP del portal con vistas modulares y APIs REST.
  */
 export function crearApp({
   servicioDiseno = new DisenoService(),
@@ -79,7 +80,7 @@ export function crearApp({
         "frame-ancestors 'none'",
         "img-src 'self' data:",
         "style-src 'self' 'unsafe-inline'",
-        "script-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
         "connect-src 'self'",
       ].join("; "),
     );
@@ -124,8 +125,12 @@ export function crearApp({
     });
   });
 
-  // API REST del módulo del Líder (registro académico)
+  // APIs REST para cada módulo (todos usan ModuleRepository)
   app.use("/api/registro", registroRouter);
+  app.use("/api/motos", createModuleRouter("motos", "Jefte"));
+  app.use("/api/plastiqueria", createModuleRouter("plastiqueria", "Edwin"));
+  app.use("/api/redes", createModuleRouter("redes", "Esteban"));
+  app.use("/api/comics", createModuleRouter("comics", "Elian"));
 
   // Rutas del Tablero de Diseños (requieren x-team-member)
   const tasksRouter = express.Router();
@@ -223,27 +228,55 @@ export function crearApp({
 
   app.use("/api/tasks", tasksRouter);
 
-  // Servir archivos estáticos del tablero web de diseño
+  // Servir archivos estáticos de public/
   app.use(
     express.static(PUBLIC_DIR, {
       extensions: ["html"],
-      index: "index.html",
+      index: false, // Controlamos nosotros las vistas HTML principales
       maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
     }),
   );
 
-  // Cualquier ruta no-API que acepte HTML sirve index.html
-  app.use((req, res, next) => {
-    if (req.path.startsWith("/api")) {
-      res.status(404).json({ ok: false, error: "Ruta de API no encontrada." });
-      return;
-    }
+  // Vistas dedicadas por módulo
+  app.get("/", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "index.html"));
+  });
 
+  app.get("/diseno", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "diseno.html"));
+  });
+
+  app.get("/registro", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "registro.html"));
+  });
+
+  app.get("/motos", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "motos.html"));
+  });
+
+  app.get("/plastiqueria", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "plastiqueria.html"));
+  });
+
+  app.get("/redes", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "redes.html"));
+  });
+
+  app.get("/comics", (_req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "comics.html"));
+  });
+
+  // Manejo de 404 para la API
+  app.use("/api", (_req, res) => {
+    res.status(404).json({ ok: false, error: "Ruta de API no encontrada." });
+  });
+
+  // Fallback para cualquier otra ruta hacia el index
+  app.use((req, res, next) => {
     if (req.method !== "GET" || !req.accepts("html")) {
       next();
       return;
     }
-
     res.sendFile(path.join(PUBLIC_DIR, "index.html"));
   });
 
