@@ -1,408 +1,294 @@
 # Sistema de Registro 2026
 
-Base compartida de la práctica: **una sola tabla `records` en Turso**, con
-contenido dinámico en **JSONB**, y un módulo aislado por integrante para evitar
-conflictos en los Pull Requests.
+Base compartida (boilerplate) para la práctica en equipo: **una sola tabla `records` en Turso (libSQL)** con contenido dinámico en formato binario **`JSONB`** y un módulo aislado por cada integrante en su propia rama para evitar cualquier tipo de conflicto de merge en los **Pull Requests (PR)** hacia `main`.
 
-> **Stack:** TypeScript + Node.js 22 + `@libsql/client` + Turso (libSQL).
->
-> **Repositorio:** <https://github.com/VumerG/Sistema_de_registro2026>
->
-> **Módulos del equipo:** `redes`, `motos` y `plastiqueria`.
->
-> **Pendiente de personalización:** faltan los nombres reales de los tres
-> integrantes. Los nombres de los módulos ya están definidos y las ramas,
-> carpetas y el campo `modulo` deben usar exactamente esos valores.
+> **Stack:** TypeScript + Node.js 20+ / Bun + `@libsql/client` (libSQL/Turso) + `tsx`.  
+> **Repositorio GitHub:** <https://github.com/VumerG/Sistema_de_registro2026>  
+> **Diseño de Base de Datos:** Single-Table Design con `jsonb()` y `json()`.
 
-## Equipo y distribución
+---
 
-| Rol | Nombre | Rama = carpeta = `modulo` |
-| --- | --- | --- |
-| Líder | VumerGallardo | `registro` |
-| Integrante 1 | _Completar nombre_ | `redes` |
-| Integrante 2 | _Completar nombre_ | `motos` |
-| Integrante 3 | _Completar nombre_ | `plastiqueria` |
+## Equipo y distribución de ramas
 
-Temas asignados:
+Cada integrante tiene asignado un tema y una rama específica. La rama, la carpeta en `/src/modules/` y el valor del campo `modulo` en la base de datos deben llamarse **exactamente igual**.
 
-- **`redes`:** inventario y seguimiento de dispositivos, direcciones IP,
-  VLANs, ubicaciones e incidencias de red.
-- **`motos`:** registro de motocicletas, propietarios, servicios,
-  mantenimientos y refacciones.
-- **`plastiqueria`:** productos, materias primas, lotes de producción, pedidos
-  e inventario de la planta.
+| Rol | Integrante | Rama / Módulo | Carpeta dedicada | Descripción del dominio |
+| :--- | :--- | :--- | :--- | :--- |
+| **Líder** | **Vumer Gallardo** | `registro` | `/src/modules/registro/` | Módulo base/ejemplo: expedientes y registros académicos con datos anidados. |
+| **Integrante 1** | **Jefte** | `motos` | `/src/modules/motos/` | Registro de motocicletas, VIN, placas, propietarios, servicios y refacciones. |
+| **Integrante 2** | **Edwin** | `plastiqueria` | `/src/modules/plastiqueria/` | Catálogo de productos plásticos, materias primas, lotes y pedidos. |
+| **Integrante 3** | **Esteban** | `redes` | `/src/modules/redes/` | Inventario de dispositivos de red (switches, routers, APs), IPs, VLANs e incidencias. |
+| **Integrante 4** | **Elian** | `comics` | `/src/modules/comics/` | Catálogo de cómics, editoriales, volúmenes, números, autores, condición y colecciones. |
 
-Regla de oro: **ningún integrante modifica archivos fuera de
-`src/modules/<su-modulo>/`**. La infraestructura compartida vive en `src/core/`,
-`src/db/` y `scripts/` y la administra el líder.
+> [!IMPORTANT]
+> **Regla de oro del equipo:** Ningún integrante debe modificar archivos fuera de su carpeta `/src/modules/[su-modulo]/`. La infraestructura compartida (`/src/core/`, `/src/db/`, `/scripts/`, `package.json`) es administrada únicamente por el Líder en `main`.
 
-## Arquitectura
+---
+
+## Arquitectura del proyecto
 
 ```text
 .
-├── .env.example
+├── .env.example                       # Plantilla de variables de entorno para Turso
 ├── .github/
-│   └── pull_request_template.md
-├── package.json
+│   └── pull_request_template.md       # Checklist obligatoria para apertura y revisión de PRs
+├── package.json                       # Scripts npm y dependencias del proyecto
 ├── scripts/
-│   └── db-init.ts                 # npm run db:init (lo corre el líder una vez)
+│   ├── db-init.ts                     # Script ejecutable npm run db:init (lo corre el líder una vez)
+│   └── run-tests.js                   # Runner universal de pruebas (compatible con Node.js y Bun)
 ├── src/
-│   ├── core/
-│   │   ├── module-repository.ts   # CRUD genérico sobre records
-│   │   ├── json.ts                # validación y merge de JSON
-│   │   └── types.ts
+│   ├── core/                          # Núcleo compartido (no modificar por los integrantes)
+│   │   ├── json.ts                    # Serialización, validación y merge profundo de objetos JSON
+│   │   ├── module-repository.ts       # Repositorio genérico CRUD sobre la tabla compartida
+│   │   └── types.ts                   # Definición de tipos base y contratos
 │   ├── db/
-│   │   ├── client.ts              # conexión única a Turso
-│   │   └── schema.ts              # DDL de la tabla e índices
+│   │   ├── client.ts                  # Conexión singleton a Turso con @libsql/client
+│   │   └── schema.ts                  # DDL de la tabla records e índices
 │   └── modules/
-│       └── registro/              # módulo ejemplo del líder
-│           ├── config.ts
-│           ├── demo.ts
-│           ├── index.ts
-│           ├── repository.ts
-│           ├── service.ts
-│           └── types.ts
+│       └── registro/                  # MÓDULO BASE DEL LÍDER (ejemplo funcional completo)
+│           ├── config.ts              # Constantes del módulo y autor del líder
+│           ├── demo.ts                # Demostración ejecutable de CRUD completo (npm run demo)
+│           ├── index.ts               # Exportaciones públicas del módulo
+│           ├── repository.ts          # Extensión de ModuleRepository fijando el módulo
+│           ├── service.ts             # Lógica de negocio y validaciones del dominio
+│           └── types.ts               # Tipo complejo RegistroAcademico
 └── tests/
-    └── module-repository.test.ts
+    └── module-repository.test.ts      # Pruebas automatizadas de aislamiento y operaciones JSONB
 ```
 
-Cada compañero crea su carpeta dentro de `src/modules/` en **su propia rama**.
-Al hacer merge de los PRs, cada módulo conserva su carpeta y no se pisan entre sí.
+Cada compañero trabaja dentro de su carpeta dentro de `src/modules/` en **su propia rama**:
+- En rama `motos`: `src/modules/motos/`
+- En rama `plastiqueria`: `src/modules/plastiqueria/`
+- En rama `redes`: `src/modules/redes/`
+- En rama `comics`: `src/modules/comics/`
 
-## Base de datos (Single-Table Design)
+Al enviar sus Pull Requests hacia `main`, cada módulo vive en su propia carpeta aislada, garantizando **cero conflictos de merge**.
 
-La tabla se llama `records` y tiene exactamente estas cinco columnas:
+---
 
-| Columna | Tipo | Uso |
-| --- | --- | --- |
-| `id` | `TEXT PRIMARY KEY` | UUID v4 generado por Turso con `DEFAULT` si el código no envía uno. |
-| `created_at` | `DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP` | Fecha de creación. |
-| `autor` | `TEXT NOT NULL` | Nombre del integrante dueño; lo inyecta el repositorio. |
-| `modulo` | `TEXT NOT NULL` | Nombre del módulo/rama; lo inyecta el repositorio. |
-| `content` | `BLOB NOT NULL CHECK (json_valid(content, 8))` | Datos del módulo guardados con `jsonb(?)`; el `CHECK` garantiza JSONB válido. |
+## Especificaciones de la Base de Datos (Single-Table Design)
 
-Índices creados por `db:init`:
+Todos los módulos persisten sus datos en una única tabla compartida en Turso llamada `records`, compuesta por **5 columnas exactas**:
 
-```sql
--- Consultas del módulo ordenadas por fecha.
-CREATE INDEX IF NOT EXISTS idx_records_modulo_fecha
-  ON records (modulo, created_at DESC);
+| Columna | Tipo SQL | Descripción |
+| :--- | :--- | :--- |
+| `id` | `TEXT PRIMARY KEY` | Identificador único UUID v4 (generado por el DEFAULT de SQLite/Turso si no se envía). |
+| `created_at` | `DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP` | Fecha y hora de creación del registro. |
+| `autor` | `TEXT NOT NULL` | Nombre del integrante creador; inyectado automáticamente por `ModuleRepository`. |
+| `modulo` | `TEXT NOT NULL` | Nombre del módulo/rama; inyectado automáticamente por `ModuleRepository`. |
+| `content` | `BLOB NOT NULL CHECK (json_valid(content, 8))` | Datos dinámicos del módulo guardados en binario nativo con `jsonb(?)`. |
 
--- Filtros por integrante.
-CREATE INDEX IF NOT EXISTS idx_records_autor
-  ON records (autor);
+### Reglas de consultas SQL implementadas
+1. **Índices obligatorios creados por `db:init`:**
+   ```sql
+   -- Índice para filtrar por módulo
+   CREATE INDEX IF NOT EXISTS idx_records_modulo ON records (modulo);
 
--- Índice funcional opcional para el campo común `estado` dentro del JSONB.
-CREATE INDEX IF NOT EXISTS idx_records_content_estado
-  ON records (modulo, json_extract(content, '$.estado'));
-```
+   -- Índice para filtrar por autor
+   CREATE INDEX IF NOT EXISTS idx_records_autor ON records (autor);
 
-Reglas internas del repositorio:
+   -- Índice compuesto para consultas ordenadas por fecha reciente
+   CREATE INDEX IF NOT EXISTS idx_records_modulo_fecha ON records (modulo, created_at DESC);
+   ```
+2. **Escrituras (`INSERT` / `UPDATE`):** Se utiliza `jsonb(?)` sobre la columna `content`. El `CHECK (json_valid(content, 8))` valida que los datos almacenados sean binario JSONB estricto.
+3. **Lecturas (`SELECT`):** Se utiliza `json(content)` para deserializar el JSONB legible y `ModuleRepository` lo parsea automáticamente al objeto tipado TypeScript `T`, garantizando que el usuario nunca manipule blobs binarios.
+4. **Filtros por campos internos:** Se utiliza `json_extract(content, '$.ruta.al.campo') = ?` para consultar propiedades anidadas dentro de `content`.
 
-- Escritura: `INSERT ... content = jsonb(?)` y `UPDATE ... content = jsonb(?)`.
-- Lectura: `SELECT ... json(content) AS content`.
-- Filtros internos: `json_extract(content, '$.campo')`.
-- `content` siempre se entrega como objeto JavaScript, nunca como `BLOB`/string.
-- El `CHECK (json_valid(content, 8))` rechaza texto JSON normal y obliga a usar JSONB.
-- Las lecturas y mutaciones están aisladas por `modulo`.
+---
 
-## Requisitos
+## La Clase Base `ModuleRepository`
 
-- Node.js **20.11 o superior** (recomendado 22).
-- npm 9 o superior.
-- Cuenta en [Turso](https://turso.tech/) y Turso CLI (opcional, pero recomendado).
+Ubicada en [src/core/module-repository.ts](file:///home/hesiquio/dev/var/proyisma7/Sistema_de_registro2026/src/core/module-repository.ts), proporciona a cada integrante un CRUD completo y seguro sin necesidad de escribir SQL:
 
-## Configuración inicial del líder
-
-### 1. Crear la base de datos en Turso
-
-```bash
-turso auth login
-turso db create sistema-registro-2026
-turso db show sistema-registro-2026 --url
-turso db tokens create sistema-registro-2026
-```
-
-Copia los dos últimos valores. `--url` empieza con `libsql://` y el token es la
-credencial de acceso.
-
-### 2. Configurar variables de entorno
-
-```bash
-npm install
-cp .env.example .env
-```
-
-Edita `.env`:
-
-```dotenv
-TURSO_DATABASE_URL="libsql://tu-base-tu-organizacion.turso.io"
-TURSO_AUTH_TOKEN="eyJ..."
-```
-
-> `.env` está en `.gitignore`. **Nunca lo subas al repositorio ni compartas el
-> token en el chat del equipo.** Pasa las credenciales por un gestor de secretos.
-
-### 3. Crear tabla e índices una sola vez
-
-```bash
-npm run db:init
-```
-
-El script es idempotente: si lo vuelves a correr no borra datos ni duplica
-índices. Al terminar muestra las columnas, el `CHECK` JSONB y los índices creados.
-
-> `CREATE TABLE IF NOT EXISTS` no modifica una tabla que ya exista. Si ya habías
-> creado `records` con un esquema anterior, respalda los datos y recrea/migra la
-> tabla antes de usar este DDL.
-
-### 4. Verificar todo
-
-```bash
-npm run verify
-npm run demo
-```
-
-`npm run demo` ejecuta el CRUD completo del módulo `registro` y limpia sus datos
-de prueba al final. Para conservarlos y verlos en Turso:
-
-```bash
-KEEP_DEMO_DATA=true npm run demo
-```
-
-## Uso de `ModuleRepository`
-
-Cada módulo define su propio tipo de contenido y crea un repositorio con su
-contexto. No se escribe SQL propio en los módulos.
-
+### Constructor
 ```ts
-import { ModuleRepository } from "../../core/module-repository.js";
-
-// El contenido puede tener objetos y arreglos anidados.
-type DispositivoRed = {
-  hostname: string;
-  ip: string;
-  mac: string;
-  tipo: "router" | "switch" | "access-point" | "servidor";
-  activo: boolean;
-  ubicacion: {
-    edificio: string;
-    piso: number;
-    rack: string;
-  };
-  etiquetas: string[];
-};
-
-const redes = new ModuleRepository<DispositivoRed>({
-  modulo: "redes",
-  autor: "Nombre del integrante",
+const repo = new ModuleRepository<MiTipo>({
+  modulo: "motos", // Nombre exacto de tu módulo
+  autor: "Jefte",   // Tu nombre
 });
-
-// CREATE: autor y modulo se inyectan automáticamente.
-const creado = await redes.create({
-  hostname: "sw-piso-3",
-  ip: "192.168.30.2",
-  mac: "AA:BB:CC:DD:EE:FF",
-  tipo: "switch",
-  activo: true,
-  ubicacion: { edificio: "Edificio A", piso: 3, rack: "R-03" },
-  etiquetas: ["core", "produccion"],
-});
-
-// READ
-const todos = await redes.findAll();
-const uno = await redes.findById(creado.id);
-const porEdificio = await redes.findByField("ubicacion.edificio", "Edificio A");
-
-// UPDATE parcial: los objetos anidados se combinan.
-const actualizado = await redes.update(creado.id, {
-  activo: false,
-  ubicacion: { rack: "R-04" },
-});
-
-// DELETE
-const eliminado = await redes.delete(creado.id);
 ```
 
 ### Métodos disponibles
 
-| Método | Retorno | Descripción |
-| --- | --- | --- |
-| `create(data)` | `StoredRecord<T>` | Inserta, inyecta `autor`/`modulo` y devuelve `content` parseado. |
-| `findAll()` | `StoredRecord<T>[]` | Todos los registros del módulo, recientes primero. |
-| `findById(id)` | `StoredRecord<T> \| null` | Busca por UUID dentro del módulo. |
-| `findByField(key, value)` | `StoredRecord<T>[]` | Filtra por campo JSON; admite rutas con puntos y valores primitivos. |
-| `update(id, data)` | `StoredRecord<T> \| null` | Merge profundo de `content`; no cambia `id`, `autor`, `modulo` ni `created_at`. |
-| `delete(id)` | `boolean` | `true` si el registro existía y fue eliminado. |
+| Método | Firma | Descripción |
+| :--- | :--- | :--- |
+| `create(data)` | `create(data: T): Promise<StoredRecord<T>>` | Convierte `data` a JSONB con `jsonb(?)`, inyecta `autor` y `modulo`, y devuelve el registro guardado con `content` parseado. |
+| `findAll()` | `findAll(): Promise<StoredRecord<T>[]>` | Retorna todos los registros correspondientes al módulo del repositorio, ordenados del más reciente al más antiguo. |
+| `findById(id)` | `findById(id: string): Promise<StoredRecord<T> \| null>` | Busca un registro por su UUID dentro del módulo. Retorna `null` si no existe o si pertenece a otro módulo. |
+| `findByField(key, val)` | `findByField(jsonKey: string, value: JsonPrimitive): Promise<StoredRecord<T>[]>` | Busca registros por propiedades de `content` (ej. `"marca"`, `"propietario.ciudad"`). Retorna coincidencias del módulo. |
+| `update(id, data)` | `update(id: string, data: DeepPartial<T>): Promise<StoredRecord<T> \| null>` | Realiza un merge profundo de las propiedades de `content`, guarda con `jsonb(?)` y devuelve el registro actualizado. |
+| `delete(id)` | `delete(id: string): Promise<boolean>` | Elimina el registro por UUID respetando el aislamiento de módulo. Retorna `true` si existía y fue borrado. |
 
-Notas:
+---
 
-- `findByField("direccion.ciudad", "Guadalajara")` busca dentro del JSON.
-- También acepta `string`, `number`, `boolean` y `null` como valor.
-- Los arreglos se reemplazan completos; los objetos anidados se combinan.
-- No se permite SQL manual ni nombres de columna dinámicos.
+## Módulo Base del Líder (`/src/modules/registro/`)
 
-## Flujo de trabajo para los integrantes
+El módulo del Líder se encuentra completamente funcional y sirve como referencia para el equipo:
 
-### 1. Clonar y cambiar a la rama de tu módulo
+- **[types.ts](file:///home/hesiquio/dev/var/proyisma7/Sistema_de_registro2026/src/modules/registro/types.ts):** Define la estructura compleja `RegistroAcademico` con objetos anidados (`contacto.direccion`), arreglos (`etiquetas`) y booleanos (`documentacion`).
+- **[repository.ts](file:///home/hesiquio/dev/var/proyisma7/Sistema_de_registro2026/src/modules/registro/repository.ts):** Subclase de `ModuleRepository<RegistroAcademico>` que fija automáticamente `modulo: "registro"` y `autor: "VumerGallardo"`.
+- **[service.ts](file:///home/hesiquio/dev/var/proyisma7/Sistema_de_registro2026/src/modules/registro/service.ts):** Capa de servicios con reglas de validación de negocio antes de persistir.
+- **[demo.ts](file:///home/hesiquio/dev/var/proyisma7/Sistema_de_registro2026/src/modules/registro/demo.ts):** Script ejecutable con `npm run demo` que realiza en vivo un ciclo CRUD completo contra Turso.
+
+Para ejecutar la demostración:
+```bash
+npm run demo
+```
+*(Para mantener los registros insertados en Turso sin eliminarlos al final de la prueba, ejecuta `KEEP_DEMO_DATA=true npm run demo`).*
+
+---
+
+## Comandos Git para el Líder de Equipo
+
+El Líder de Equipo debe ejecutar estos comandos para inicializar la base compartida en GitHub y generar las ramas de trabajo de cada colaborador:
 
 ```bash
-git clone git@github.com:VumerG/Sistema_de_registro2026.git
-cd Sistema_de_registro2026
-git checkout redes   # usa exactamente tu módulo
-```
-
-Si usas HTTPS:
-
-```bash
-git clone https://github.com/VumerG/Sistema_de_registro2026.git
-```
-
-### 2. Instalar dependencias y configurar `.env`
-
-```bash
-npm install
-cp .env.example .env
-# Pide al líder las credenciales y pégalas en .env
-```
-
-**No ejecutes `npm run db:init`**: el líder ya creó la tabla compartida una sola
-vez. Tampoco cambies las credenciales ni compartas `.env`.
-
-### 3. Trabajar SOLO en tu carpeta
-
-```text
-src/modules/redes/
-├── config.ts
-├── demo.ts          # opcional
-├── index.ts
-├── repository.ts
-├── service.ts
-└── types.ts
-```
-
-Copia el patrón de `src/modules/registro/` y cambia:
-
-- `MODULO_*` por exactamente el nombre de tu rama.
-- `AUTOR_*` por tu nombre.
-- El tipo del contenido según tu dominio.
-
-No modifiques `src/core/`, `src/db/`, `scripts/`, `package.json` ni archivos de
-otros módulos. Si necesitas una dependencia nueva o un cambio en la base
-compartida, coméntalo con el líder **antes** de tocar esos archivos.
-
-### 4. Verificar antes de subir
-
-```bash
-npm run verify
-```
-
-Prueba tu CRUD al menos una vez contra Turso con un script/demo propio.
-No dejes registros de prueba en producción.
-
-### 5. Subir tu rama y abrir el PR
-
-```bash
-git status
-git add src/modules/redes
-git commit -m "feat(redes): agrega CRUD de dispositivos de red"
-git push origin redes
-```
-
-En GitHub abre un **Pull Request de `redes` hacia `main`**. Completa la
-plantilla de PR, adjunta evidencia de la prueba y espera la revisión del líder.
-No hagas merge de tu propio PR.
-
-Para mantener tu rama al día:
-
-```bash
-git fetch origin
-git rebase origin/main   # evita mezclar commits de otros módulos
-# Resuelve conflictos si existen y luego:
-git push --force-with-lease origin redes
-```
-
-## Comandos Git del líder
-
-El repositorio de GitHub ya existe. Desde la carpeta local que contiene esta
-base (no ejecutes `git init` sobre un repo ya clonado):
-
-```bash
+# 1. Posicionarse en el directorio del proyecto
 cd ~/Sistema_de_registro2026
 
-# 1. Configura tu identidad solo si aún no está configurada.
+# 2. Configurar la identidad en Git (si no está lista)
 git config user.name "VumerGallardo"
 git config user.email "136099923+VumerG@users.noreply.github.com"
 
-# 2. Revisa, confirma y publica la base en main.
-git status
-git add .
-git commit -m "feat: base compartida con Turso, JSONB y módulo registro"
-git push origin main
+# 3. Inicializar repositorio (solo si es nuevo) y agregar origen remoto
+# git init
+# git remote add origin https://github.com/VumerG/Sistema_de_registro2026.git
 
-# 3. Crea y publica una rama por integrante.
-#    Estos son los módulos reales del equipo.
-for modulo in redes motos plastiqueria; do
+# 4. Asegurar que la rama principal se llame main, confirmar y subir
+git branch -M main
+git add .
+git commit -m "feat: boilerplate base con Turso JSONB y modulo registro"
+git push -u origin main
+
+# 5. Crear y publicar en GitHub las ramas individuales para cada integrante:
+for modulo in motos plastiqueria redes comics; do
   git checkout main
-  git pull --ff-only origin main
   git checkout -b "$modulo"
   git push -u origin "$modulo"
 done
 
-# 4. Regresa a main.
+# 6. Regresar a la rama principal
 git checkout main
 ```
 
-Si tu autenticación es por SSH, cambia el remoto una vez:
+---
+
+## Guía paso a paso para los Integrantes del Equipo
+
+### 1. Clonar el repositorio y cambiarse a su rama asignada
+Abre tu terminal y clona el proyecto. Cambia inmediatamente a la rama que te corresponde:
 
 ```bash
-git remote set-url origin git@github.com:VumerG/Sistema_de_registro2026.git
+# Clonar el proyecto
+git clone https://github.com/VumerG/Sistema_de_registro2026.git
+cd Sistema_de_registro2026
+
+# Cambiar a tu rama (ejemplos según tu asignación):
+# Si eres Jefte:
+git checkout motos
+
+# Si eres Edwin:
+git checkout plastiqueria
+
+# Si eres Esteban:
+git checkout redes
+
+# Si eres Elian:
+git checkout comics
 ```
 
-En GitHub, configura `main` como rama protegida y exige PR + revisión del líder
-antes de hacer merge.
+Verifica en qué rama estás con:
+```bash
+git branch --show-current
+```
 
-## Checklist de revisión del líder
+### 2. Instalar dependencias y configurar variables de entorno
+```bash
+npm install
+cp .env.example .env
+```
+Abre `.env` y pega las credenciales de Turso que te proporcionará el Líder:
+```dotenv
+TURSO_DATABASE_URL=libsql://tu-base.turso.io
+TURSO_AUTH_TOKEN=eyJhbGciOi...
+```
 
-Antes de aprobar un PR:
+> [!WARNING]
+> **NO ejecutes `npm run db:init`**: El líder ya creó la tabla compartida en Turso.
+> **NUNCA hagas commit de tu archivo `.env`**.
 
-1. La rama, el campo `modulo` y la carpeta se llaman exactamente igual.
-2. Solo hay cambios dentro de `src/modules/<modulo>/`.
-3. El módulo usa `ModuleRepository` y no incluye SQL propio.
-4. No se subieron `.env`, tokens ni archivos de base de datos locales.
-5. `npm run typecheck` y `npm test` pasan en la rama.
-6. El CRUD fue probado contra Turso y no dejó datos de prueba.
-7. El PR apunta a `main` y no tiene conflictos.
+### 3. Trabajar únicamente en tu carpeta de módulo
+Crea tus archivos y código **únicamente** en tu carpeta correspondiente:
+- Jefte: `/src/modules/motos/`
+- Edwin: `/src/modules/plastiqueria/`
+- Esteban: `/src/modules/redes/`
+- Elian: `/src/modules/comics/`
 
-La plantilla de PR incluye esta checklist para que cada integrante la complete.
+#### Estructura recomendada para tu módulo:
+```text
+src/modules/[tu-modulo]/
+├── config.ts       # Constante MODULO_[NOMBRE] y tu AUTOR
+├── types.ts        # Tipos TypeScript de los datos que guardarás en JSONB
+├── repository.ts   # Tu repositorio que extiende o instancia ModuleRepository
+├── service.ts      # (Opcional) Reglas de negocio o validaciones
+├── demo.ts         # (Recomendado) Script para probar tu CRUD
+└── index.ts        # Exportaciones públicas de tu módulo
+```
 
-## Scripts disponibles
+#### Ejemplo de uso en tu módulo (`src/modules/[tu-modulo]/repository.ts`):
+```ts
+import { ModuleRepository } from "../../core/module-repository.js";
+import { AUTOR_MOTOS, MODULO_MOTOS } from "./config.js";
+import type { Moto } from "./types.js";
 
-| Comando | Qué hace |
-| --- | --- |
-| `npm run db:init` | Crea la tabla `records` y sus índices en Turso (solo líder). |
-| `npm run demo` | CRUD de demostración del módulo `registro`. |
-| `npm run typecheck` | Valida TypeScript sin generar archivos. |
-| `npm test` | Pruebas de integración con una base libSQL local en memoria. |
-| `npm run verify` | Ejecuta typecheck y pruebas en secuencia. |
+export class MotosRepository extends ModuleRepository<Moto> {
+  constructor(autor: string = AUTOR_MOTOS) {
+    super({
+      modulo: MODULO_MOTOS,
+      autor,
+    });
+  }
+}
+```
 
-## Solución de problemas
+### 4. Validar tu código localmente
+Antes de hacer commit y subir cambios, verifica que TypeScript compile y que las pruebas sigan pasando:
+```bash
+npm run verify
+```
+*(Ejecuta internamente `npm run typecheck` y `npm test`).*
 
-**`Falta la variable de entorno TURSO_DATABASE_URL`**
-No existe `.env` o no se copió completo. Ejecuta `cp .env.example .env` y
-completa las credenciales.
+### 5. Confirmar cambios y enviar Pull Request
+```bash
+# 1. Revisa que solo hayas modificado archivos dentro de tu carpeta
+git status
 
-**`no such table: records`**
-El líder debe ejecutar `npm run db:init` contra la base correcta.
+# 2. Agrega únicamente tu carpeta
+git add src/modules/[tu-modulo]
 
-**`SQLITE_TOOBIG` / JSON demasiado grande**
-Reduce el tamaño del registro o divide la información en varios registros; no
-agregues columnas específicas.
+# 3. Haz commit con un mensaje descriptivo
+git commit -m "feat([tu-modulo]): implementa CRUD y logica del modulo"
 
-**Conflicto en un PR**
-Actualiza tu rama con `git fetch origin && git rebase origin/main`. No mezcles
-cambios de otros módulos en tu carpeta.
+# 4. Sube los cambios a tu rama en GitHub
+git push origin [tu-modulo]
+```
 
-**La demo no encuentra datos**
-La demo limpia sus registros al terminar. Usa `KEEP_DEMO_DATA=true npm run demo`
-si quieres inspeccionarlos.
+### 6. Abrir el Pull Request (PR) hacia `main`
+1. Entra a GitHub: <https://github.com/VumerG/Sistema_de_registro2026/pulls>
+2. Haz clic en **"New pull request"**.
+3. Selecciona como base: `main` y como compare: `tu-modulo` (ej. `motos`).
+4. Se cargará automáticamente la plantilla de `.github/pull_request_template.md`.
+5. Llena todos los campos, marca cada casilla de la **Checklist del integrante**, adjunta los logs o capturas de tu prueba en la sección de evidencia y crea el PR.
+6. Notifica al Líder de Equipo para su revisión y merge.
+
+---
+
+## Scripts disponibles en `package.json`
+
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run db:init` | Crea la tabla `records` y sus índices en Turso (solo debe correrlo el Líder). |
+| `npm run demo` | Ejecuta la demostración de CRUD del módulo base `registro`. |
+| `npm run typecheck` | Valida todos los tipos TypeScript sin emitir archivos compilados. |
+| `npm test` | Ejecuta la suite de pruebas unitarias y de integración sobre `ModuleRepository`. |
+| `npm run verify` | Corre en serie `typecheck` y `test` para certificar el código antes de abrir un PR. |

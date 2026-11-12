@@ -23,15 +23,15 @@ export const SCHEMA_STATEMENTS = [
     )
   `,
   `
-    CREATE INDEX IF NOT EXISTS idx_records_modulo_fecha
-      ON records (modulo, created_at DESC)
+    CREATE INDEX IF NOT EXISTS idx_records_modulo
+      ON records (modulo)
   `,
   `
     CREATE INDEX IF NOT EXISTS idx_records_autor
       ON records (autor)
   `,
   `
-    CREATE INDEX IF NOT EXISTS idx_records_content_estado
-      ON records (modulo, json_extract(content, '$.estado'))
+    CREATE INDEX IF NOT EXISTS idx_records_modulo_fecha
+      ON records (modulo, created_at DESC)
   `,
 ] as const;
